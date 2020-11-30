@@ -39,13 +39,25 @@ namespace GameWorkstore.Google.Protobuf
             }
         }
 
+        private static string PackagePath = string.Empty;
+        private const string PackageName = "com.gameworkstore.googleprotobufcsharp";
+        private const string ProtocRelativePath = "Protoc/Win64/protoc.exe";
         private static string ProtocPath
         {
             get
             {
-                return Application.dataPath + "/googleprotobufcsharp/Protoc/Win64/protoc.exe";
-                //string[] packageManagerDirs = Directory.GetDirectories("Library/PackageCache/");
+                PackagePath = Directory.GetDirectories("Library/PackageCache/").FirstOrDefault(IsPackagePath);
+                if (string.IsNullOrEmpty(PackagePath))
+                {
+                    return Application.dataPath + "/googleprotobufcsharp/" + ProtocRelativePath;
+                }
+                return Application.dataPath + "/../" + PackagePath + "/" + ProtocRelativePath;
             }
+        }
+
+        private static bool IsPackagePath(string path)
+        {
+            return path.Contains(PackageName);
         }
 
         private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
