@@ -33,6 +33,6 @@ The installed version of protoc is Windows 64 bits.
 # Modifications
 
 Current version required to add modification to #define GOOGLE_PROTOBUF_SUPPORT_SYSTEM_MEMORY on top of few files:
-> IBufferMessage.cs
-> WritingPrimitives.cs
+* IBufferMessage.cs
+* WritingPrimitives.cs
 
