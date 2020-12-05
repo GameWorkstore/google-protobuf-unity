@@ -1,4 +1,4 @@
-﻿using System.IO;
+﻿#if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
 
@@ -85,3 +85,4 @@ namespace GameWorkstore.Google.Protobuf
         }
     }
 }
+#endif
