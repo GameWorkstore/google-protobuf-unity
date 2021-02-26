@@ -1,0 +1,27 @@
+name: UPM Sync
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+    branches:
+      - 'main'
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cook UPM
+        run: |
+          git config --local user.email "contact@gameworkstore.com"
+          git config --local user.name "game-workstore-bot"
+          git subtree split -P Assets/Package/ -b upm
+          git checkout upm
+          ls
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: upm
+          force: true

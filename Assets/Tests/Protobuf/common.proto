@@ -1,0 +1,11 @@
+syntax = "proto3";
+option optimize_for = LITE_RUNTIME;
+option go_package = "./main";
+
+package main;
+
+message IntRange
+{
+   string Min = 1;
+   string Max = 2;
+}
