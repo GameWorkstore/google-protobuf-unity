@@ -20,12 +20,17 @@ jobs:
       - name: Update internals
         id: updated
         run: |
-          READMECMP=`cmp "README.md" "Assets/Package/README.md"`
-          if [ ! $READMECMP ]
+          READMECMP=`cmp README.md Assets/Package/README.md`
+          if [ -n "$READMECMP" ]
           then
-            echo "they are different"
+              cp -f README.md Assets/Package/README.md
+              git add --a
+              git commit -m "Updated README.md"
+              git push origin
+              echo "::set-output name=required::false"
+          else
+              echo "::set-output name=required::false"
           fi
-          echo "::set-output name=required::false"
 
       - name: Push changes
         if: ${{ steps.updated.outputs.required }}
