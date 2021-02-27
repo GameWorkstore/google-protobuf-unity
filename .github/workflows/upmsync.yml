@@ -21,13 +21,14 @@ jobs:
         id: updated
         run: |
           READMECMP=`cmp README.md Assets/Package/README.md`
+          echo $READMECMP
+          echo ${{ github.event.ref }}
           if [ -n "$READMECMP" ]
           then
               cp -f README.md Assets/Package/README.md
               git add --a
               git commit -m "Updated README.md"
-              git push origin
-              echo "::set-output name=required::false"
+              echo "::set-output name=required::true"
           else
               echo "::set-output name=required::false"
           fi
@@ -40,12 +41,14 @@ jobs:
           branch: main
 
       - name: Cook UPM
+        if: false
         run: |
           git subtree split -P Assets/Package/ -b upm
           git checkout upm
           ls
 
       - name: Push changes
+        if: false
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
