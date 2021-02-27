@@ -20,7 +20,7 @@ jobs:
       - name: Update internals
         id: updated
         run: |
-          READMECMP=cmp --silent "README.md" "Assets/Package/README.md"
+          READMECMP=`cmp "README.md" "Assets/Package/README.md"`
           if [ ! $READMECMP ]
           then
             echo "they are different"
