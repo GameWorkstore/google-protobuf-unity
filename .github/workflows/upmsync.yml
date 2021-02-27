@@ -18,14 +18,17 @@ jobs:
           git config --local user.name "game-workstore-bot"
       
       - name: Update internals
+        id: updated
         run: |
           READMECMP=cmp --silent "README.md" "Assets/Package/README.md"
           if [ ! $READMECMP ]
           then
             echo "they are different"
           fi
+          echo "::set-output name=required::false"
 
       - name: Push changes
+        if: ${{ steps.updated.outputs.required }}
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
