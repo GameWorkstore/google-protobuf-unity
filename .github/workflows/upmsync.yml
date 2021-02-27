@@ -20,9 +20,10 @@ jobs:
       - name: Update internals
         id: updated
         run: |
-          READMECMP=`cmp README.md Assets/Package/README.md`
           echo $READMECMP
           echo ${{ github.event.ref }}
+          exit 0
+          READMECMP=`cmp README.md Assets/Package/README.md`
           if [ -n "$READMECMP" ]
           then
               cp -f README.md Assets/Package/README.md
