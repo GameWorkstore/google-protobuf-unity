@@ -19,7 +19,8 @@ jobs:
       
       - name: Update internals
         run: |
-          if [! cmp --silent "README.md" "Assets/Package/README.md" ]
+          READMECMP=cmp --silent "README.md" "Assets/Package/README.md"
+          if [ ! $READMECMP ]
           then
             echo "they are different"
           fi
