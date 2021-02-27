@@ -16,6 +16,7 @@ jobs:
         run: |
           git config --local user.email "contact@gameworkstore.com"
           git config --local user.name "game-workstore-bot"
+          sudo apt-get install diffutils
       
       - name: Update internals
         id: updated
