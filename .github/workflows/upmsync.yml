@@ -12,13 +12,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Cook UPM
+      - name: Config
         run: |
           git config --local user.email "contact@gameworkstore.com"
           git config --local user.name "game-workstore-bot"
+      
+      - name: Update internals
+        run: |
+          if [! cmp --silent "README.md" "Assets/Package/README.md" ]
+          then
+            echo "they are different"
+          fi
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+
+      - name: Cook UPM
+        run: |
           git subtree split -P Assets/Package/ -b upm
           git checkout upm
           ls
+
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:

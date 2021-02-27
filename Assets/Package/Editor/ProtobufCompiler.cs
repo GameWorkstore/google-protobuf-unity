@@ -77,21 +77,28 @@ namespace GameWorkstore.Google.Protobuf
             return path.Contains(PackageName);
         }
 
+        private static GoogleProtobufConfig GetProtobufConfig()
+        {
+            var finds = AssetDatabase.FindAssets("t:GoogleProtobufConfig");
+            var paths = finds.Select(guid => AssetDatabase.GUIDToAssetPath(guid));
+            var selects = paths.Select(path => AssetDatabase.LoadAssetAtPath<GoogleProtobufConfig>(path));
+            return selects.FirstOrDefault();
+        }
+
         private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
         {
             if (!UnityEditorInternal.InternalEditorUtility.isHumanControllingUs) return;
-            if (!ProtobufPreferences.IsEnabled) return;
+            if (!File.Exists(ProtocPath)) return;
+            var config = GetProtobufConfig();
+            if (config == null) return;
+            if (!config.ProtocolCompilerEnabled) return;
 
-            var config = AssetDatabase.FindAssets("t:GoogleProtobufConfig").FirstOrDefault(path => AssetDatabase.LoadAssetAtPath<GoogleProtobufConfig>(path));
-            if (config == null)
-            {
-
-            }
+            var langConfigs = GetCompilerConfigs(config);
 
             var anyChanges = false;
             foreach (string str in importedAssets)
             {
-                if (CompileProtobufAssetPath(str, IncludePaths) == true)
+                if (CompileProtobufAssetPath(langConfigs, str, IncludePaths) == true)
                 {
                     anyChanges = true;
                 }
@@ -109,6 +116,13 @@ namespace GameWorkstore.Google.Protobuf
         /// </summary>
         internal static void ForceRecompile()
         {
+            if (!File.Exists(ProtocPath)) return;
+            var config = GetProtobufConfig();
+            if (config == null) return;
+            if (!config.ProtocolCompilerEnabled) return;
+
+            var langConfigs = GetCompilerConfigs(config);
+
             if (ProtobufPreferences.LogDebug)
             {
                 UnityEngine.Debug.Log("[ProtobufCompiler]: Compiling all .proto files in the project...");
@@ -120,21 +134,21 @@ namespace GameWorkstore.Google.Protobuf
                 {
                     UnityEngine.Debug.Log("[ProtobufCompiler]: Compiling " + protoFile);
                 }
-                CompileProtobufSystemPath(protoFile, IncludePaths);
+                CompileProtobufSystemPath(langConfigs, protoFile, IncludePaths);
             }
             UnityEngine.Debug.Log(nameof(ProtobufCompiler));
             AssetDatabase.Refresh();
         }
 
-        private static bool CompileProtobufAssetPath(string assetPath, string[] includePaths)
+        private static bool CompileProtobufAssetPath(IEnumerable<ProtobufCompilerConfig> langConfigs, string assetPath, string[] includePaths)
         {
             string protoFileSystemPath = Directory.GetParent(Application.dataPath) + Path.DirectorySeparatorChar.ToString() + assetPath;
-            return CompileProtobufSystemPath(protoFileSystemPath, includePaths);
+            return CompileProtobufSystemPath(langConfigs, protoFileSystemPath, includePaths);
         }
 
         private static readonly string ProjectPath = Directory.GetParent(Application.dataPath).FullName + Path.DirectorySeparatorChar.ToString();
 
-        private static bool CompileProtobufSystemPath(string absoluteProtoFilePath, string[] includePaths)
+        private static bool CompileProtobufSystemPath(IEnumerable<ProtobufCompilerConfig> langConfigs, string absoluteProtoFilePath, string[] includePaths)
         {
             //Do not compile changes coming from UPM package.
             if (absoluteProtoFilePath.Contains("Packages/com.")) return false;
@@ -150,14 +164,14 @@ namespace GameWorkstore.Google.Protobuf
                 includes += string.Format(" --proto_path=\"{0}\"", include);
             }
 
-            foreach (var config in GetCompilerConfigs())
+            foreach (var langConfig in langConfigs)
             {
-                var absoluteLocationOutput = string.IsNullOrEmpty(config.RelativeLocation) ? absoluteNeightborOutputPath : Application.dataPath + "/" + config.RelativeLocation;
+                var absoluteLocationOutput = string.IsNullOrEmpty(langConfig.RelativeLocation) ? absoluteNeightborOutputPath : Application.dataPath + "/" + langConfig.RelativeLocation;
                 if (!Directory.Exists(absoluteLocationOutput))
                 {
                     Directory.CreateDirectory(absoluteLocationOutput);
                 }
-                var compiledOutput = string.Format(config.Lang, absoluteLocationOutput);
+                var compiledOutput = string.Format(langConfig.Lang, absoluteLocationOutput);
 
                 var finalArguments = compiledOutput + includes + compilingFile;
                 if (ProtobufPreferences.LogDebug)
@@ -180,7 +194,7 @@ namespace GameWorkstore.Google.Protobuf
                 string error = proc.StandardError.ReadToEnd();
                 proc.WaitForExit();
 
-                var generatedFile = "Assets/" + config.RelativeLocation + Path.GetFileNameWithoutExtension(absoluteProtoFilePath) + config.Extension;
+                var generatedFile = "Assets/" + langConfig.RelativeLocation + Path.GetFileNameWithoutExtension(absoluteProtoFilePath) + langConfig.Extension;
                 if (ProtobufPreferences.LogDebug)
                 {
                     if (output != "")
@@ -207,24 +221,24 @@ namespace GameWorkstore.Google.Protobuf
 
         private static readonly List<ProtobufCompilerConfig> configs = new List<ProtobufCompilerConfig>();
 
-        public static List<ProtobufCompilerConfig> GetCompilerConfigs()
+        public static IEnumerable<ProtobufCompilerConfig> GetCompilerConfigs(GoogleProtobufConfig config)
         {
             configs.Clear();
-            if (ProtobufPreferences.CSharpEnabled)
+            if (config.CSharpCompilerEnabled)
             {
                 configs.Add(new ProtobufCompilerConfig()
                 {
                     Lang = "--csharp_out=\"{0}\"",
-                    RelativeLocation = ProtobufPreferences.CSharpCustomPath,
+                    RelativeLocation = config.CSharpCustomPath,
                     Extension = ".cs"
                 });
             }
-            if (ProtobufPreferences.GoLangEnabled)
+            if (config.GoLangCompilerEnabled)
             {
                 configs.Add(new ProtobufCompilerConfig()
                 {
                     Lang = "--go_out=paths=source_relative:{0}",
-                    RelativeLocation = ProtobufPreferences.GoLangCustomPath,
+                    RelativeLocation = config.GoLangCustomPath,
                     Extension = ".pb.go"
                 });
             }

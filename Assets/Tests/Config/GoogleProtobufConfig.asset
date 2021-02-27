@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ProtocolCompilerEnabled: 1
   CSharpCompilerEnabled: 1
-  CSharpCustomPath: 
+  CSharpCustomPath: Tests/Generated/CSharp/
   GoLangCompilerEnabled: 1
-  GoLangCustomPath: 
+  GoLangCustomPath: Tests/Generated/Go/
