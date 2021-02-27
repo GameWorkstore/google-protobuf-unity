@@ -20,7 +20,9 @@ To do this:
 # How to install
 
 At package.json, add these line of code:
-> "com.gameworkstore.googleprotobufunity": "git://github.com/GameWorkstore/google-protobuf-unity.git"
+```json
+"com.gameworkstore.googleprotobufunity": "git://github.com/GameWorkstore/google-protobuf-unity.git"
+```
 
 And wait for unity to download and compile the package.
 
