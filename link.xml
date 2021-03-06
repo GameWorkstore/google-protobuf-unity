@@ -1,0 +1,3 @@
+<linker>
+  <assembly fullname="GameWorkstore.Google.Protobuf" preserve="all"/>
+</linker>
