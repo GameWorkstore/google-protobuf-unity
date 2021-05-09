@@ -1,0 +1,18 @@
+{
+    "name": "GameWorkstore.Google.Protobuf.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:ea86e1e2f3573eb4192e1dd536f1057d"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
