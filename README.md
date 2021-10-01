@@ -26,11 +26,25 @@ And wait for unity to download and compile the package.
 
 for update package for a newer version, update end of line from 3.15.2005 to any released version on Releases.
 
-# Preinstalled Protoc
+# Installing Protoc
 
-The installed version of protoc is Windows 64 bits.
+### Windows
 
-# Configuration
+This package comes with preinstalled protoc for Windows 64 bits.
+
+### MacOS
+
+Install protobuf using brew
+
+> brew install protobuf
+
+Install protoc-gen-go using brew
+
+> brew install protoc-gen-go
+
+Brew must simlink both binaries on /usr/local/bin folder, check if any error appears while compiling.
+
+# Configuring
 
 There are two modes of configuration:
 
@@ -48,20 +62,5 @@ This method is used for a project with more complex configurations or sub-projec
 Please specify a program using absolute path or make sure the program is available in your PATH system variable
 --go_out: protoc-gen-go: Plugin failed with status code 1.
 
-This happens when your PATH variable doesn't contains the path to protoc-gen-go program.
-If you are in mac and want install protoc-gen-go, use the command 
-> brew install protoc-gen-go
-
-to find where the program is, use:
-
-> brew info protoc-gen-go
-
-then add it to path, use nano and at the path to bin folder:
-
-> sudo nano /etc/paths
-
-inside nano, add this line:
-
-> /usr/local/Cellar/protoc-gen-go/1.27.1/bin
-
-Restart Unity, and it solve your issue.
+This happens when your protoc and/or protoc-gen-go installation isn't configured properly. Verify PATH on windows,
+or /usr/local/bin to see if all binaries are there.
