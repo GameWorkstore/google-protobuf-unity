@@ -1,0 +1,17 @@
+{
+  "name": "com.gameworkstore.googleprotobufunity",
+  "version": "3.15.2011",
+  "displayName": "GameWorkstore GoogleProtobuf Unity",
+  "description": "Google Protobuf C#/GoLang/Python Library for Unity",
+  "unity": "2021.3",
+  "icon": ".icon.png",
+  "keywords": [ "google", "protobuf", "csharp", "golang", "python" ],
+  "author": {
+    "name": "Game Workstore",
+    "email": "contact@gameworkstore.com",
+    "url": "https://gameworkstore.com"
+  },
+  "dependencies": {
+    
+  }
+}
